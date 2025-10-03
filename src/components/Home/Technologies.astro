@@ -1,0 +1,15 @@
+---
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import Carrusel from "../../components/Carrusel.astro";
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<section class="item__card fade-in" id="tech">
+  <h2
+    class="text-xl md:text-5xl font-medium mb-10 hover-underline-animation left"
+  >
+    {t("section.technologies.title")}
+  </h2>
+  <Carrusel />
+</section>

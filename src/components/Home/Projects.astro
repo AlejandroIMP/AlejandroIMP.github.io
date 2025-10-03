@@ -1,0 +1,51 @@
+---
+import { getCollection } from "astro:content";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import ProjectCard from "../../components/ProjectCard.astro";
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const projects = await getCollection(
+  "projects",
+  (entry: { data: { lang: string }; slug: string }) => {
+    return entry.data.lang === lang;
+  }
+);
+
+export const prerender = true;
+---
+
+<section class="gap-5 item__card fade-in" id="projects">
+  <h2
+    class="text-xl md:text-5xl font-medium mb-10 hover-underline-animation left"
+  >
+    {t("section.projects.title")}
+  </h2>
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    {
+      projects.map(
+        (project: {
+          slug: unknown;
+          data: {
+            title: string;
+            description: string;
+            tags: string[];
+            img: string;
+            link: string;
+            github: string;
+          };
+        }) => (
+          <ProjectCard
+            slug={project.slug}
+            title={project.data.title}
+            description={project.data.description}
+            tags={project.data.tags}
+            img={project.data.img}
+            link={`${project.data.link}`}
+            github={project.data.github}
+          />
+        )
+      )
+    }
+  </section>
+</section>

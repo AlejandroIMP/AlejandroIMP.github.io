@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+body{
+  scroll-timeline: --scroll-timeline block;
+}
+
+.item__card {
+	view-timeline: --card-timeline block;
+}
+
+.fade-in {
+  animation: fade-in linear;
+  animation-timeline: --card-timeline;
+  animation-range: entry 20% cover 40%;
+}
+
+.slide-in {
+	animation: slide-in linear;
+	animation-timeline: --card-timeline;
+	animation-range: entry 20% cover 40%;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+	from {
+		transform: translateX(-100px);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+@supports not (animation-timeline: scroll()) {
+	.progress-bar {
+		transform: scaleX(1);
+	}
+
+	.fade-in,
+	.scale-in,
+	.slide-in {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.olivetti {
+  font-size: clamp(1rem,0.8rem + 3vw, 4rem);
+  font-family: monospace;
+  color: var(--text);
+	width: 26ch;
+  animation: olivetti 3s steps(26) infinite alternate-reverse, pampalluga 0.5s step-end infinite alternate;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 2px solid black;
+}
+
+
+@keyframes olivetti {
+	from {
+		width: 0;
+	}
+}
+
+@keyframes pampalluga {
+	50% {
+		border-color: transparent;
+	}
+}
+
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+}
+
+.hover-underline-animation::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 3px;
+  bottom: -5px;
+  left: 0;
+  background-color: #1d1d1d;
+  transition: transform 0.25s ease-out;
+}
+
+.hover-underline-animation:hover::after {
+  transform: scaleX(1);
+}
+
+.hover-underline-animation.left::after {
+  transform-origin: bottom right;
+}
+
+.hover-underline-animation.left:hover::after {
+  transform-origin: bottom left;
+}
+
+/**/
+
+
+@theme {
+  --animate-fade-in: fade-in 0.5s ease-in-out;
+
+  @keyframes .fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+}

@@ -1,0 +1,24 @@
+---
+import SocialIcons from "../../components/SocialIcons.astro";
+import LanguageSwitcher from "../../components/LanguageSwitcher.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<header class="h-lvh flex flex-col justify-center items-center">
+  <nav
+    class="flex justify-center fixed top-0 left-0 right-0 z-10 py-4 font-light text-lg bg-amber-50"
+  >
+    <LanguageSwitcher />
+  </nav>
+  <section id="hero" class="animate-fade-in">
+    <p class="font-semibold text-gradient olivetti">
+      {t("header.presentation")}
+      <span class="gradient">Alejandro Sunuc</span>
+    </p>
+  </section>
+  <p class="font-light text-lg">{t("header.description")}</p>
+  <SocialIcons />
+</header>

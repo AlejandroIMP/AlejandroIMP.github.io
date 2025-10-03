@@ -1,0 +1,20 @@
+---
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<section
+  class="gap-5 item__card fade-in h-lvh flex flex-col items-center justify-center"
+  id="about-me"
+>
+  <h2
+    class="text-xl md:text-5xl font-medium mb-10 hover-underline-animation left"
+  >
+    {t("section.aboutme.title")}
+  </h2>
+  <p class="text-[clamp(1rem,2.5vw,1.125rem)] text-left">
+    {t("section.aboutme.description")}
+  </p>
+</section>

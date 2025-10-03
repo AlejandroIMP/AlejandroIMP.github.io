@@ -1,0 +1,47 @@
+---
+import CardButton from "./CardComponents/CardButton.astro";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+interface Props {
+  img: string;
+  title: string;
+  description: string;
+  tags: string[];
+  link: string;
+  github: string;
+  slug: unknown;
+}
+
+const { img, title, description, tags, link, github, slug } = Astro.props;
+---
+
+<article
+  class="rounded-lg shadow-xl p-4 flex flex-col items-center hover:shadow-2xl hover:drop-shadow-xl hover:bg-amber-50 transition-all duration-300 ease-in-out hover:scale-105"
+>
+  <a href=`./projects/${slug}`>
+    <figure class="w-full">
+      <img
+        class="rounded-lg shadow-xl"
+        transition:name={`img-${slug}`}
+        src={img}
+        alt={title}
+      />
+      <figcaption
+        class="font-semibold text-2xl text-center mt-3"
+        transition:name={`title-${slug}`}
+      >
+        {title}
+      </figcaption>
+    </figure>
+  </a>
+  <ul class="flex gap-2 font-normal text-sm mb-2 p-0">
+    {tags.map((tag: string) => <li>{tag}</li>)}
+  </ul>
+  <p class="font-normal text-[clamp(1rem,2.5vw,1.125rem)]  mb-5">{description}</p>
+  <div class="flex gap-2">
+    <CardButton link={link}>{t("card.project.btn.link")}</CardButton>
+    <CardButton link={github}>{t("card.project.btn.code")}</CardButton>
+  </div>
+</article>
