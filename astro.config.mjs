@@ -1,10 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://alejandroimp.github.io', // Cambia esto por tu nombre de usuario de GitHub
+  
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'es'],
@@ -13,8 +15,9 @@ export default defineConfig({
     },
   },
 
-  output: 'server',
-  adapter: vercel(),
+  // Modo estático para GitHub Pages
+  output: 'static',
+  
   integrations: [react()],
 
   vite: {

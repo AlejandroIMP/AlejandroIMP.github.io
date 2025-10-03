@@ -24,3 +24,6 @@ pnpm-debug.log*
 .idea/
 
 .vscode
+
+CONTACT_FORM_NOTICE.md
+GITHUB_PAGES_SETUP.md
