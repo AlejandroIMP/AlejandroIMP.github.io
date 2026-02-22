@@ -37,6 +37,12 @@ jobs:
       
       - name: Build Astro site
         run: npm run build
+        env:
+          PUBLIC_EMAILJS_PUBLIC_KEY: ${{ secrets.PUBLIC_EMAILJS_PUBLIC_KEY }}
+          PUBLIC_EMAILJS_SERVICE_ID: ${{ secrets.PUBLIC_EMAILJS_SERVICE_ID }}
+          PUBLIC_EMAILJS_TEMPLATE_ID_AUTOREPLY: ${{ secrets.PUBLIC_EMAILJS_TEMPLATE_ID_AUTOREPLY }}
+          PUBLIC_EMAILJS_TEMPLATE_ID_NOTIFICATION: ${{ secrets.PUBLIC_EMAILJS_TEMPLATE_ID_NOTIFICATION }}
+          PUBLIC_EMAILJS_RECIPIENT_EMAIL: ${{ secrets.PUBLIC_EMAILJS_RECIPIENT_EMAIL }}
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
