@@ -1,40 +1,88 @@
 import { useTranslations } from "../../i18n/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
+import emailjs from "@emailjs/browser";
 
 interface Props {
   lang: "en" | "es";
 }
 
+// Configure EmailJS - Get these values from https://www.emailjs.com/
+const EMAILJS_PUBLIC_KEY = import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY;
+const EMAILJS_SERVICE_ID = import.meta.env.PUBLIC_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID_AUTOREPLY = import.meta.env.PUBLIC_EMAILJS_TEMPLATE_ID_AUTOREPLY;
+const EMAILJS_TEMPLATE_ID_NOTIFICATION = import.meta.env.PUBLIC_EMAILJS_TEMPLATE_ID_NOTIFICATION;
+const EMAILJS_RECIPIENT_EMAIL = import.meta.env.PUBLIC_EMAILJS_RECIPIENT_EMAIL;
+
+// At the top of Contact.tsx (temporarily for debugging)
 export default function Contact({lang}: Props) {
   const t = useTranslations(lang);
   const [responseMessage, setResponseMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
+
+  useEffect(() => {
+    // Initialize EmailJS
+    if (EMAILJS_PUBLIC_KEY) {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+    }
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    
+    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID_AUTOREPLY || !EMAILJS_TEMPLATE_ID_NOTIFICATION || !EMAILJS_PUBLIC_KEY) {
+      setResponseMessage("Contact form is not configured. Please contact the site owner.");
+      setMessageType("error");
+      return;
+    }
+
     setIsLoading(true);
+    setMessageType("");
     
     try {
-      const formData = new FormData(event.target as HTMLFormElement);
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        body: formData,
-      });
+      const formElement = event.target as HTMLFormElement;
+      const formData = new FormData(formElement);
       
-      const data: {
-        success: boolean;
-        message: string;
-      } = await response.json();
-      
-      if (data.success) {
-        setResponseMessage(t("section.contact.form.success"));
-        (event.target as HTMLFormElement).reset(); 
-      } else {
-        setResponseMessage(t("section.contact.form.error"));
-      }
+      const userName = formData.get("name") as string;
+      const userEmail = formData.get("email") as string;
+      const userMessage = formData.get("message") as string;
+
+      // Auto-reply to the user who sent the message
+      const autoReplyParams = {
+        to_email: userEmail,
+        user_name: userName,
+      };
+
+      // Notification to the site owner
+      const notificationParams = {
+        to_email: EMAILJS_RECIPIENT_EMAIL,
+        from_name: userName,
+        from_email: userEmail,
+        message: userMessage,
+      };
+
+      // Send auto-reply to user
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID_AUTOREPLY,
+        autoReplyParams
+      );
+
+      // Send notification to site owner
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID_NOTIFICATION,
+        notificationParams
+      );
+
+      setResponseMessage(t("section.contact.form.success"));
+      setMessageType("success");
+      formElement.reset();
     } catch (error) {
+      console.error("Email sending failed:", error);
       setResponseMessage(t("section.contact.form.error"));
+      setMessageType("error");
     } finally {
       setIsLoading(false); 
     }
@@ -86,7 +134,11 @@ export default function Contact({lang}: Props) {
             className="font-light w-full p-3 border border-gray-300 rounded-lg"
           ></textarea>
         </fieldset>
-        <button className="p-3 border rounded-2xl hover:text-white hover:bg-amber-900 ease-in-out transition-colors duration-300">
+        <button 
+          type="submit"
+          disabled={isLoading}
+          className="p-3 border rounded-2xl hover:text-white hover:bg-amber-900 ease-in-out transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           {
             isLoading ? (
               <svg
@@ -101,7 +153,7 @@ export default function Contact({lang}: Props) {
                   cy="12"
                   r="10"
                   stroke="currentColor"
-                  stroke-width="4"></circle>
+                  strokeWidth="4"></circle>
                 <path
                   className="opacity-75"
                   fill="currentColor"
@@ -111,13 +163,16 @@ export default function Contact({lang}: Props) {
               <span>{t("section.contact.form.submit")}</span>
             )
           }
-        
         </button>
       </form>
       {responseMessage && (
         <p
           id="responseMessage"
-          className="text-lg text-center mt-5 p-3 border border-gray-300 rounded-lg"
+          className={`text-lg text-center mt-5 p-3 border rounded-lg ${
+            messageType === "success"
+              ? "border-green-300 bg-green-50 text-green-800"
+              : "border-red-300 bg-red-50 text-red-800"
+          }`}
         >
           {responseMessage}
         </p>
