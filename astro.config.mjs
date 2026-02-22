@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://alejandroimp.github.io', // Cambia esto por tu nombre de usuario de GitHub
+  site: 'https://alejandroimp.me',
   
   i18n: {
     defaultLocale: 'en',
